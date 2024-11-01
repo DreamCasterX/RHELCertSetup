@@ -2,7 +2,7 @@
 
 
 # CREATOR: Mike Lu
-# CHANGE DATE: 2024/11/01
+# CHANGE DATE: 11/01/2024
 __version__="1.0"
 
 
@@ -88,7 +88,7 @@ else
 
 
     # Ensure Internet is connected
-    nslookup "hp.com" > /dev/null
+    nslookup "google.com" > /dev/null
     if [ $? != 0 ]; then 
         echo "❌ No Internet connection! Please check your network" && sleep 5 && exit 0
     fi
@@ -177,7 +177,7 @@ else
     fi
 
 
-    # Install the certification software on Clinet & Server
+    # Install the certification software on Client & Server
     subscription-manager attach --auto
     echo
     echo "------------------------------------"
