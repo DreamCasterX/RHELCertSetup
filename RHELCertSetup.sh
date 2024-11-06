@@ -2,8 +2,8 @@
 
 
 # CREATOR: Mike Lu
-# CHANGE DATE: 11/01/2024
-__version__="1.0"
+# CHANGE DATE: 11/06/2024
+__version__="1.1"
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -63,11 +63,6 @@ else
 
     # Set proxy to automatic
     sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.system.proxy mode 'auto' 2> /dev/null
-
-
-    # Disable automatic DNS (Optional)
-    # NIC=`nmcli -t -f DEVICE c s -a | grep -v 'lo' | grep -v 'wl' | grep -v 'virbr0'`
-    # nmcli connection modify $NIC ipv4.ignore-auto-dns 'yes'
 
 
     # Disable auto suspend/dim screen/screen blank/auto power-saver
@@ -141,44 +136,39 @@ else
 
   
     # Check system registration status
-    if ! subscription-manager list | grep -i 'subscribed' > /dev/null; then
+    if rhc status | grep -w 'Not connected' > /dev/null; then
         echo
         echo "----------------------"
         echo "REGISTERING  SYSTEM..."
         echo "----------------------"
         echo
-        ! subscription-manager register && exit 0
+        ! rhc connect && exit 0
         subscription-manager refresh
     fi
         
     
-    # Attach the Red Hat Enterprise Linux Self-Serve Subscription
+    # Enable the Red Hat Enterprise Linux Repositories
     echo
-    echo "--------------------------------------"
-    echo "ATTACHING CORRECT RHEL SUBSCRIPTION..."
-    echo "--------------------------------------"
+    echo "-----------------"
+    echo "ENABLING REPOS..."
+    echo "-----------------"
     echo
-    # Get Pool ID
-    POOL_ID=`subscription-manager list --available | sed -n '{/500 Nodes/, /Subscription Name/ p}' | head -n -1 | grep "Pool ID:" | rev | cut -d ' ' -f1 | rev`
-    subscription-manager attach --pool=$POOL_ID
-
     if [[ $OS_VERSION == "8" ]]; then
-        subscription-manager repos --enable=cert-1-for-rhel-8-x86_64-rpms || ( echo "❌ Attaching certification repo failed, please runs script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-rpms || ( echo "❌ Attaching baseos repo failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-rpms || ( echo "❌ Attaching appstream failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Attaching appstream debug failed, please run script again."; exit $ERRCODE )
-    else
-        subscription-manager repos --enable=cert-1-for-rhel-9-x86_64-rpms || ( echo "❌ Attaching certification repo failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-rpms || ( echo "❌ Attaching baseos repo failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-rpms || ( echo "❌ Attaching appstream repo failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Attaching appstream debug repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=cert-1-for-rhel-8-x86_64-rpms || ( echo "❌ Enabling certification repo failed, please runs script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-rpms || ( echo "❌ Enabling baseos repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-rpms || ( echo "❌ Enabling appstream failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Enabling baseos debug repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Enabling appstream debug failed, please run script again."; exit $ERRCODE )
+    elif [[ $OS_VERSION == "9" ]]; then
+        subscription-manager repos --enable=cert-1-for-rhel-9-x86_64-rpms || ( echo "❌ Enabling certification repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-rpms || ( echo "❌ Enabling baseos repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-rpms || ( echo "❌ Enabling appstream repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Enabling baseos debug repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Enabling appstream debug repo failed, please run script again."; exit $ERRCODE )
     fi
 
 
     # Install the certification software on Client & Server
-    subscription-manager attach --auto
     echo
     echo "------------------------------------"
     echo "INSTALLING CERTIFICATION SOFTWARE..."
