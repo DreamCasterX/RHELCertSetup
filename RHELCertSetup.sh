@@ -3,7 +3,7 @@
 
 # CREATOR: Mike Lu
 # CHANGE DATE: 11/06/2024
-__version__="1.1"
+__version__="1.0"
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
