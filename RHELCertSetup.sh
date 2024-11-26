@@ -2,7 +2,7 @@
 
 
 # CREATOR: Mike Lu
-# CHANGE DATE: 11/06/2024
+# CHANGE DATE: 11/26/2024
 __version__="1.0"
 
 
@@ -206,6 +206,9 @@ else
         if [[ "$RELEASE" == "9.4" && "$KERNEL" != "5.14.0-427.13.1.el9_4.x86_64" ]]; then
             dnf remove -y kernel kernel-debug kernel-debuginfo
             dnf install -y kernel-5.14.0-427.13.1.el9_4 kernel-debug-5.14.0-427.13.1.el9_4 kernel-debuginfo-5.14.0-427.13.1.el9_4 --skip-broken
+        elif [[ "$RELEASE" == "9.5" && "$KERNEL" != "5.14.0-503.11.1.el9_5.x86_64" ]]; then
+            dnf remove -y kernel kernel-debug kernel-debuginfo
+            dnf install -y kernel-5.14.0-503.11.1.el9_5 kernel-debug-5.14.0-503.11.1.el9_5 kernel-debuginfo-5.14.0-503.11.1.el9_5 --skip-broken
         fi
         ;;
     esac
