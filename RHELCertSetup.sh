@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 
-# CREATOR: Mike Lu
-# CHANGE DATE: 11/26/2024
+# CREATOR: Mike Lu (klu7@lenovo.com)
+# CHANGE DATE: 1/15/2025
 __version__="1.0"
 
 
@@ -10,13 +10,12 @@ __version__="1.0"
 # Run this script after RHEL boot on both the SUT and HUT
 
 # Prerequisites for both SUT and HUT:
-# 1) Boot to USB with GA ISO
-#    a) Set up an admin account (Name: u  Password: u)
+# 1) Boot to GA ISO
+#    a) Set up an admin account
 #         - Root account : Allow SSH login
 #         - User account : Enable administrator access
 #         - Ensure kdump is enabled
-#    b) Set Software Selection to "Workstation"
-#    c) Connect to Internet and register with Red-Hat partner account (optional)
+#    b) Connect to Internet and register with Red-Hat partner account (optional)
 # 2) Boot to OS 
 #    a) Assign an IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
 
@@ -85,7 +84,7 @@ else
     # Ensure Internet is connected
     nslookup "google.com" > /dev/null
     if [ $? != 0 ]; then 
-        echo "❌ No Internet connection! Please check your network" && sleep 5 && exit 0
+        echo "❌ No Internet connection! Please check your network" && sleep 5 && exit 1
     fi
 
 
@@ -142,7 +141,7 @@ else
         echo "REGISTERING  SYSTEM..."
         echo "----------------------"
         echo
-        ! rhc connect && exit 0
+        ! rhc connect && exit 1
         subscription-manager refresh
     fi
         
