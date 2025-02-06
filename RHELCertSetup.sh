@@ -2,7 +2,7 @@
 
 
 # CREATOR: Mike Lu (klu7@lenovo.com)
-# CHANGE DATE: 1/15/2025
+# CHANGE DATE: 2/6/2025
 __version__="1.0"
 
 
@@ -18,6 +18,10 @@ __version__="1.0"
 #    b) Connect to Internet and register with Red-Hat partner account (optional)
 # 2) Boot to OS 
 #    a) Assign an IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
+
+
+# User-defined settings
+TIME_ZONE='Asia/Taipei'
 
 
 # Ensure the user is running the script as root
@@ -77,7 +81,7 @@ else
 
   
     # Set time zone and reset NTP
-    timedatectl set-timezone Asia/Taipei
+    timedatectl set-timezone $TIME_ZONE
     timedatectl set-ntp 0 && sleep 1 && timedatectl set-ntp 1
 
 
