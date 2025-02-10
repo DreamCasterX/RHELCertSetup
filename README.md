@@ -6,7 +6,7 @@
 3.	Auto update new versions from the remote repository
 
 
-### Run this script after RHEL boot on both the SUT and HUT
+### Run this script after RHEL boot on both the SUT and TC
 #
 #### [Prerequisites]
 ##### 1).  Boot to USB with GA ISO
@@ -14,7 +14,6 @@
   +  Root account => Allow SSH login
   +  User account => Enable administrator access
   +  Ensure kdump is enabled
-+ Set Software Selection to "Workstation"
 + Connect to Internet and register with Red-Hat partner account (Optional)
 #####  2).  Boot to OS 
-+ Assign an IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
++ Assign an IP to SUT & TC. Make sure you can ping SUT <-> TC successfully
