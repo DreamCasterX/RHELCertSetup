@@ -79,7 +79,12 @@ else
     # Show battery percentage
     sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.desktop.interface show-battery-percentage "true" 2> /dev/null
 
-  
+ 
+    # Enable SSH and disable firewall
+    ! systemctl status sshd | grep 'running' > /dev/null && systemctl enable sshd && systemctl start sshd
+    systemctl status firewalld | grep 'running' > /dev/null && systemctl stop firewalld && systemctl disable firewalld
+
+       
     # Set time zone and reset NTP
     timedatectl set-timezone $TIME_ZONE
     ln -sf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime
