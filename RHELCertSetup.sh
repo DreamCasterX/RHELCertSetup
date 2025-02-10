@@ -2,14 +2,14 @@
 
 
 # CREATOR: Mike Lu (klu7@lenovo.com)
-# CHANGE DATE: 2/6/2025
+# CHANGE DATE: 2/10/2025
 __version__="1.0"
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
-# Run this script after RHEL boot on both the SUT and HUT
+# Run this script after RHEL boot on both the SUT and TC
 
-# Prerequisites for both SUT and HUT:
+# Prerequisites for both SUT and TC:
 # 1) Boot to GA ISO
 #    a) Set up an admin account
 #         - Root account : Allow SSH login
@@ -17,7 +17,7 @@ __version__="1.0"
 #         - Ensure kdump is enabled
 #    b) Connect to Internet and register with Red-Hat partner account (optional)
 # 2) Boot to OS 
-#    a) Assign an IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
+#    a) Assign an IP to SUT & TC. Make sure you can ping SUT <-> TC successfully
 
 
 # User-defined settings
@@ -82,6 +82,7 @@ else
   
     # Set time zone and reset NTP
     timedatectl set-timezone $TIME_ZONE
+    ln -sf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime
     timedatectl set-ntp 0 && sleep 1 && timedatectl set-ntp 1
 
 
@@ -129,13 +130,11 @@ else
     echo "╭─────────────────────────────────────────────────────────╮"
     [[ $OS_VERSION == [89] ]] && echo "│    RHEL $OS_VERSION System Certification Test Environment Setup   │" || echo "│    RHEL $OS_VERSION System Certification Test Environment Setup  │"
     echo "╰─────────────────────────────────────────────────────────╯"
-    echo "Are you setting up a client or server?"
-    read -p "(c)Client  (s)Server: " TYPE
-    while [[ "$TYPE" != [CcSs] ]]
-    do 
-      echo "Please enter a valid response (C or S)"
-      read -p "(c)Client  (s)Server: " TYPE
-    done
+    echo "Are you setting up a SUT or TC?"
+    read -p "(s)SUT   (t)TC: " TYPE
+    while [[ "$TYPE" != [SsTt] ]]; do 
+        read -p "(s)SUT   (t)TC: " TYPE
+    done 
 
   
     # Check system registration status
@@ -171,7 +170,7 @@ else
     fi
 
 
-    # Install the certification software on Client & Server
+    # Install the certification software on SUT & TC
     echo
     echo "------------------------------------"
     echo "INSTALLING CERTIFICATION SOFTWARE..."
@@ -179,8 +178,8 @@ else
     echo
     dnf install -y redhat-certification && dnf install -y redhat-certification-hardware --allowerasing || ( echo "❌ Installing hardware test suite package failed!" )
 
-    # Install the Cockpit on Server only
-    if [[ "$TYPE" == [Ss] ]]; then
+    # Install the Cockpit on TC only
+    if [[ "$TYPE" == [Tt] ]]; then
         echo
         echo "-----------------------------------"
         echo "INSTALLING COCKPIT RPM ON SERVER..."
@@ -217,8 +216,8 @@ else
     esac
 
 
-    # Enable the cockpit.socket on Server
-    if [[ "$TYPE" == [Ss] ]]; then
+    # Enable the cockpit.socket on TC
+    if [[ "$TYPE" == [Tt] ]]; then
         echo
         echo "--------------------------"
         echo "ENABLING COCKPIT SOCKET..."
