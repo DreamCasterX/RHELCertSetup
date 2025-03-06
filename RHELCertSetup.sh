@@ -172,19 +172,16 @@ echo "-----------------"
 echo "ENABLING REPOS..."
 echo "-----------------"
 echo
-if [[ $OS_VERSION == "8" ]]; then
-    subscription-manager repos --enable=cert-1-for-rhel-8-$(uname -m)-rpms || { echo "❌ Enabling certification repo failed, please runs script again."; exit 1; }
-    subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-rpms || { echo "❌ Enabling baseos repo failed, please run script again."; exit 1; }
-    subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-rpms || { echo "❌ Enabling appstream failed, please run script again."; exit 1; }
-    subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-debug-rpms || { echo "❌ Enabling baseos debug repo failed, please run script again."; exit 1; }
-    subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-debug-rpms || { echo "❌ Enabling appstream debug failed, please run script again."; exit 1; }
-elif [[ $OS_VERSION == "9" ]]; then
-    subscription-manager repos --enable=cert-1-for-rhel-9-$(uname -m)-rpms || { echo "❌ Enabling certification repo failed, please run script again."; exit 1; }
-    subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-rpms || { echo "❌ Enabling baseos repo failed, please run script again."; exit 1; }
-    subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-rpms || { echo "❌ Enabling appstream repo failed, please run script again."; exit 1; }
-    subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-debug-rpms || { echo "❌ Enabling baseos debug repo failed, please run script again."; exit 1; }
-    subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-debug-rpms || { echo "❌ Enabling appstream debug repo failed, please run script again."; exit 1; }
-fi
+cert="cert-1-for-rhel-$OS_VERSION-$(uname -m)-rpms"
+baseos="rhel-$OS_VERSION-for-$(uname -m)-baseos-rpms"
+baseos_debug="rhel-$OS_VERSION-for-$(uname -m)-baseos-debug-rpms"
+appstream="rhel-$OS_VERSION-for-$(uname -m)-appstream-rpms"
+appstream_debug="rhel-$OS_VERSION-for-$(uname -m)-appstream-debug-rpms"
+for repo in $cert $baseos $baseos_debug $appstreamo $appstream_debug; do
+    if ! dnf repolist | grep "$repo" > /dev/null; then
+        subscription-manager repos --enable=$repo || { echo "❌ Enabling $repo failed$, please check"; exit 1; }
+    fi
+done    
 echo -e "\n${green}Done!${nc}\n" 
 
 
