@@ -24,7 +24,15 @@ __version__="1.0"
 TIME_ZONE='Asia/Taipei'
 
 
-# Fixed settings
+# GA kernel list
+GA_KERNEL_8_10='4.18.0-553.el8_10'
+GA_KERNEL_9_4='5.14.0-427.13.1.el9_4'
+GA_KERNEL_9_5='5.14.0-503.11.1.el9_5'
+GA_KERNEL_9_6=''
+GA_KERNEL_10_0=''
+
+
+# Color settings
 green='\e[32m'
 yellow='\e[93m'
 nc='\e[0m'
@@ -217,20 +225,30 @@ RELEASE=$(cat /etc/redhat-release | cut -d ' ' -f6)
 KERNEL=$(uname -r)
 case $OS_VERSION in
 "8")
-    if [[ "$RELEASE" == "8.10" && "$KERNEL" != "4.18.0-553.el8_10.x86_64" ]]; then 
+    if [[ "$RELEASE" == "8.10" && "$KERNEL" != "$GA_KERNEL_8_10.$(uname -m)" ]]; then 
         dnf remove -y kernel kernel-debug kernel-debuginfo
-        dnf install -y kernel-4.18.0-553.el8_10 kernel-debug-4.18.0-553.el8_10 kernel-debuginfo-4.18.0-553.el8_10 --skip-broken
+        dnf install -y kernel-$GA_KERNEL_8_10 kernel-debug-$GA_KERNEL_8_10 kernel-debuginfo-$GA_KERNEL_8_10 --skip-broken
     fi
     ;;
 "9")
-    if [[ "$RELEASE" == "9.4" && "$KERNEL" != "5.14.0-427.13.1.el9_4.x86_64" ]]; then
+    if [[ "$RELEASE" == "9.4" && "$KERNEL" != "$GA_KERNEL_9_4.$(uname -m)" ]]; then
         dnf remove -y kernel kernel-debug kernel-debuginfo
-        dnf install -y kernel-5.14.0-427.13.1.el9_4 kernel-debug-5.14.0-427.13.1.el9_4 kernel-debuginfo-5.14.0-427.13.1.el9_4 --skip-broken
-    elif [[ "$RELEASE" == "9.5" && "$KERNEL" != "5.14.0-503.11.1.el9_5.x86_64" ]]; then
+        dnf install -y kernel-$GA_KERNEL_9_4 kernel-debug-$GA_KERNEL_9_4 kernel-debuginfo-$GA_KERNEL_9_4 --skip-broken
+    elif [[ "$RELEASE" == "9.5" && "$KERNEL" != "$GA_KERNEL_9_5.$(uname -m)" ]]; then
         dnf remove -y kernel kernel-debug kernel-debuginfo
-        dnf install -y kernel-5.14.0-503.11.1.el9_5 kernel-debug-5.14.0-503.11.1.el9_5 kernel-debuginfo-5.14.0-503.11.1.el9_5 --skip-broken
+        dnf install -y kernel-$GA_KERNEL_9_5 kernel-debug-$GA_KERNEL_9_5 kernel-debuginfo-$GA_KERNEL_9_5 --skip-broken
+    elif [[ "$RELEASE" == "9.6" && "$KERNEL" != "$GA_KERNEL_9_6.$(uname -m)" ]]; then
+        dnf remove -y kernel kernel-debug kernel-debuginfo
+        dnf install -y kernel-$GA_KERNEL_9_6 kernel-debug-$GA_KERNEL_9_6 kernel-debuginfo-$GA_KERNEL_9_6 --skip-broken
     fi
     ;;
+"10")
+    if [[ "$RELEASE" == "10.0" && "$KERNEL" != "$GA_KERNEL_10_0.$(uname -m)" ]]; then 
+        dnf remove -y kernel kernel-debug kernel-debuginfo
+        dnf install -y kernel-$GA_KERNEL_10_0 kernel-debug-$GA_KERNEL_10_0 kernel-debuginfo-$GA_KERNEL_10_0 --skip-broken
+    fi
+    ;;
+
 esac
 [[ $? = 0 ]] && echo -e "\n${green}Done!${nc}\n" || { echo -e "❌ Failed to install GA kernel"; exit 1; }
 
