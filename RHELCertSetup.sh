@@ -195,6 +195,7 @@ echo "INSTALLING CERTIFICATION SOFTWARE..."
 echo "------------------------------------"
 echo
 dnf install -y redhat-certification && dnf install -y redhat-certification-hardware --allowerasing || { echo "❌ Installing hardware test suite package failed!"; exit 1; }
+echo -e "\n${green}Done!${nc}\n" 
 
 
 # Install the Cockpit on TC only
