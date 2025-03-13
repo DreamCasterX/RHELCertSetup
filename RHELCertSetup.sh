@@ -2,7 +2,7 @@
 
 
 # CREATOR: Mike Lu
-# CHANGE DATE: 3/6/2025
+# CHANGE DATE: 3/13/2025
 __version__="1.0"
 
 
@@ -53,6 +53,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # Customize keyboard shortcut
+USERNAME=$(logname)
 OS_VERSION=`cat /etc/os-release | grep ^VERSION_ID= | awk -F= '{print $2}' | cut -d '"' -f2 | cut -d '.' -f1`
 ID=`id -u $USERNAME`
 sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/']"
@@ -107,37 +108,37 @@ timedatectl set-ntp 0 && sleep 1 && timedatectl set-ntp 1
 
 # Ensure Internet is connected
 CheckInternet() {
-nslookup "google.com" > /dev/null
-if [ $? != 0 ]; then 
-    echo "❌ No Internet connection! Please check your network" && sleep 5 && exit 1
-fi
+    nslookup "google.com" > /dev/null
+    if [ $? != 0 ]; then 
+        echo "❌ No Internet connection! Please check your network" && sleep 5 && exit 1
+    fi
 }
 CheckInternet
 
 # Check the latest update of this script
 UpdateScript() {
-release_url=https://api.github.com/repos/DreamCasterX/RHELCertSetup/releases/latest
-new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
-release_note=$(curl -s "${release_url}" | grep '"body":' | awk -F\" '{print $4}')
-tarball_url="https://github.com/DreamCasterX/RHELCertSetup/archive/refs/tags/${new_version}.tar.gz"
-if [[ $new_version != $__version__ ]]; then
-    echo -e "⭐️ New version found!\n\nVersion: $new_version\nRelease note:\n$release_note"
-    sleep 2
-    echo -e "\nDownloading update..."
-    pushd "$PWD" > /dev/null 2>&1
-    curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".RHELCertSetup.tar.gz" "${tarball_url}"
-    if [[ -e ".RHELCertSetup.tar.gz" ]]; then
-        tar -xf .RHELCertSetup.tar.gz -C "$PWD" --strip-components 1 > /dev/null 2>&1
-        rm -f .RHELCertSetup.tar.gz
-        rm -f README.md
-        popd > /dev/null 2>&1
-        sleep 3
-        sudo chmod 755 RHELCertSetup.sh
-        echo -e "Successfully updated! Please run RHELCertSetup.sh again.\n\n" ; exit 1
-    else
-        echo -e "\n❌ Error occurred while downloading" ; exit 1
-    fi 
-fi
+    release_url=https://api.github.com/repos/DreamCasterX/RHELCertSetup/releases/latest
+    new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
+    release_note=$(curl -s "${release_url}" | grep '"body":' | awk -F\" '{print $4}')
+    tarball_url="https://github.com/DreamCasterX/RHELCertSetup/archive/refs/tags/${new_version}.tar.gz"
+    if [[ $new_version != $__version__ ]]; then
+        echo -e "⭐️ New version found!\n\nVersion: $new_version\nRelease note:\n$release_note"
+        sleep 2
+        echo -e "\nDownloading update..."
+        pushd "$PWD" > /dev/null 2>&1
+        curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".RHELCertSetup.tar.gz" "${tarball_url}"
+        if [[ -e ".RHELCertSetup.tar.gz" ]]; then
+            tar -xf .RHELCertSetup.tar.gz -C "$PWD" --strip-components 1 > /dev/null 2>&1
+            rm -f .RHELCertSetup.tar.gz
+            rm -f README.md
+            popd > /dev/null 2>&1
+            sleep 3
+            sudo chmod 755 RHELCertSetup.sh
+            echo -e "Successfully updated! Please run RHELCertSetup.sh again.\n\n" ; exit 1
+        else
+            echo -e "\n❌ Error occurred while downloading" ; exit 1
+        fi 
+    fi
 }
 UpdateScript
 
@@ -289,9 +290,14 @@ echo "--------------------------------------"
 echo "✅ RHEL CERTIFICATION SETUP COMPLETED"
 echo "---------------------------------------"
 echo
-echo "System will automatically reboot after 8 seconds..."
+echo "System will automatically reboot after 5 seconds..."
 echo
-for n in {8..1}s; do printf "\r$n"; sleep 1; done
+read -p "Is it okay to continue (y/n)? " ans
+while [[ "$ans" != [YyNn] ]]; do 
+    read -p "Is it okay to continue (y/n)? "ans
+done     
+[[ "$ans" == [Nn] ]] && exit 1
+for n in {5..1}s; do printf "\r$n"; sleep 1; done
 echo
 reboot now
 
