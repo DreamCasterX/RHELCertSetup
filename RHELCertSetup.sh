@@ -155,6 +155,14 @@ fi
 echo "╭─────────────────────────────────────────────────────────╮"
 [[ $OS_VERSION == [89] ]] && echo "│    RHEL $OS_VERSION System Certification Test Environment Setup   │" || echo "│    RHEL $OS_VERSION System Certification Test Environment Setup  │"
 echo "╰─────────────────────────────────────────────────────────╯"
+KERNEL=$(uname -r)
+CPU_info=`grep "model name" /proc/cpuinfo | head -1 | cut -d ':' -f2`
+MEM_info=`sudo dmidecode -t memory | grep -i size | grep -v "No Module Installed" | awk '{sum += $2} END {print sum " GB"}'`
+echo
+echo -e "Kernel: ${yellow}"$KERNEL"${nc}"
+echo -e "CPU:${yellow}"$CPU_info"${nc}"
+echo -e "DIMM: ${yellow}"$MEM_info"${nc}"
+echo
 echo "Are you setting up a SUT or TC?"
 read -p "(s)SUT   (t)TC: " TYPE
 while [[ "$TYPE" != [SsTt] ]]; do 
@@ -223,7 +231,6 @@ echo "ENSURING PROPER KERNEL VERSION..."
 echo "---------------------------------"
 echo
 RELEASE=$(cat /etc/redhat-release | cut -d ' ' -f6)
-KERNEL=$(uname -r)
 case $OS_VERSION in
 "8")
     if [[ "$RELEASE" == "8.10" && "$KERNEL" != "$GA_KERNEL_8_10.$(uname -m)" ]]; then 
