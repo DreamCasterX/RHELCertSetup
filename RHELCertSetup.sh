@@ -158,10 +158,14 @@ echo "╰───────────────────────�
 KERNEL=$(uname -r)
 CPU_info=`grep "model name" /proc/cpuinfo | head -1 | cut -d ':' -f2`
 MEM_info=`sudo dmidecode -t memory | grep -i size | grep -v "No Module Installed" | awk '{sum += $2} END {print sum " GB"}'`
+storage_info=`sudo parted -l | grep "Disk /dev/" | grep -v "loop" | awk '{sum += $3} END {print sum " GB"}'`
+product_name=`cat /sys/class/dmi/id/product_name`
 echo
-echo -e "Kernel: ${yellow}"$KERNEL"${nc}"
+echo -e "Product Name: ${yellow}"$product_name"${nc}"
 echo -e "CPU:${yellow}"$CPU_info"${nc}"
 echo -e "DIMM: ${yellow}"$MEM_info"${nc}"
+echo -e "Storage: ${yellow}"$storage_info"${nc}"
+echo -e "Kernel: ${yellow}"$KERNEL"${nc}"
 echo
 echo "Are you setting up a SUT or TC?"
 read -p "(s)SUT   (t)TC: " TYPE
