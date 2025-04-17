@@ -41,12 +41,11 @@ nc='\e[0m'
 # Ensure the user is running the script as root
 if [ "$EUID" -ne 0 ]; then 
 
-    # Copy test result file to USB drive (Run as User)
+    # Copy the latest test result file to the current directory (Run as User)
     if [[ -d /var/rhcert/save ]]; then 
         XmlLog=`sudo ls -t /var/rhcert/save/*xml | head -1`
-        XmlLogName=`sudo ls -t /var/rhcert/save/*xml | head -1 | cut -d "/" -f5`
-        USBDrive=/run/media/$USERNAME/`ls /run/media/$USERNAME`
-        sudo cp $XmlLog $USBDrive 2> /dev/null && echo -e "💾 $XmlLogName has been captured\n"
+        XmlLogName=$(basename "$XmlLog")
+        sudo cp $XmlLog ./ 2> /dev/null && echo -e "💾 "$XmlLogName" has been saved to the current directory$\n"
     fi
     echo "⚠️ Please run as root (sudo su) to start the installation."
     exit 1
