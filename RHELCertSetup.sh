@@ -2,7 +2,7 @@
 
 
 # CREATOR: Mike Lu
-# CHANGE DATE: 3/13/2025
+# CHANGE DATE: 6/2/2025
 __version__="1.0"
 
 
@@ -100,9 +100,12 @@ systemctl status firewalld | grep 'running' > /dev/null && systemctl stop firewa
 
    
 # Set time zone and reset NTP
-timedatectl set-timezone $TIME_ZONE
-ln -sf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime
-timedatectl set-ntp 0 && sleep 1 && timedatectl set-ntp 1
+CURRENT_TIME_ZONE=$(timedatectl status | grep "Time zone" | awk '{print $3}')
+if [ "$CURRENT_TIME_ZONE" != "$TIME_ZONE" ]; then
+    sudo timedatectl set-timezone $TIME_ZONE
+    sudo ln -sf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime
+    sudo timedatectl set-ntp 0 && sleep 1 && timedatectl set-ntp 1
+fi
 
 
 # Ensure Internet is connected
