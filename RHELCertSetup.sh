@@ -2,7 +2,7 @@
 
 
 # CREATOR: Mike Lu
-# CHANGE DATE: 6/2/2025
+# CHANGE DATE: 6/4/2025
 __version__="1.0"
 
 
@@ -28,8 +28,8 @@ TIME_ZONE='Asia/Taipei'
 GA_KERNEL_8_10='4.18.0-553.el8_10'
 GA_KERNEL_9_4='5.14.0-427.13.1.el9_4'
 GA_KERNEL_9_5='5.14.0-503.11.1.el9_5'
-GA_KERNEL_9_6=''
-GA_KERNEL_10_0=''
+GA_KERNEL_9_6='5.14.0-570.12.1.el9_6'
+GA_KERNEL_10_0='6.12.0-55.9.1.el10_0'
 
 
 # Color settings
